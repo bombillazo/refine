@@ -161,6 +161,7 @@ const Templates: React.FC = () => {
           onClose={() => setIsFilterDrawerOpen(false)}
           open={isFilterDrawerOpen}
           title="Filter Templates"
+          variant="templates"
         >
           <div className={clsx("flex", "flex-col", "not-prose")}>
             <TemplatesFilters
@@ -438,7 +439,8 @@ const dataTemplates: {
     title: "Win95 Style Admin Panel",
     description:
       "With the headless architecture of Refine, you have the flexibility to implement any custom design!",
-    image: "https://refine.ams3.cdn.digitaloceanspaces.com/templates/win95.jpg",
+    image:
+      "https://refine.ams3.cdn.digitaloceanspaces.com/templates/video-club.png",
     integrations: [
       {
         label: "Headless",

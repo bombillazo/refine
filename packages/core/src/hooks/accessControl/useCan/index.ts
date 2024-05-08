@@ -1,15 +1,19 @@
+import { useContext } from "react";
+
+import { getXRay } from "@refinedev/devtools-internal";
 import {
-  useQuery,
   UseQueryOptions,
   UseQueryResult,
+  useQuery,
 } from "@tanstack/react-query";
-import { useContext } from "react";
 
 import { AccessControlContext } from "@contexts/accessControl";
 import { sanitizeResource } from "@definitions/helpers/sanitize-resource";
-import { CanParams, CanReturnType } from "../../../interfaces";
 import { useKeys } from "@hooks/useKeys";
-import { getXRay } from "@refinedev/devtools-internal";
+import {
+  CanParams,
+  CanReturnType,
+} from "../../../contexts/accessControl/types";
 
 export type UseCanProps = CanParams & {
   /**
@@ -71,7 +75,10 @@ export const useCan = ({
     ...mergedQueryOptions,
     meta: {
       ...mergedQueryOptions?.meta,
-      ...getXRay("useCan", preferLegacyKeys),
+      ...getXRay("useCan", preferLegacyKeys, resource, [
+        "useButtonCanAccess",
+        "useNavigationButton",
+      ]),
     },
     retry: false,
   });

@@ -1,8 +1,10 @@
 import { defineConfig } from "tsup";
 
 import { lodashReplacePlugin } from "../shared/lodash-replace-plugin";
+import { prismReactRendererThemeReplacePlugin } from "../shared/prism-react-renderer-theme-replace-plugin";
 import { markAsExternalPlugin } from "../shared/mark-as-external-plugin";
 import { removeTestIdsPlugin } from "../shared/remove-test-ids-plugin";
+import { tablerCjsReplacePlugin } from "../shared/tabler-cjs-replace-plugin";
 
 export default defineConfig({
   entry: {
@@ -17,10 +19,15 @@ export default defineConfig({
   splitting: false,
   sourcemap: true,
   clean: false,
+  minify: true,
+  format: ["cjs", "esm"],
+  outExtension: ({ format }) => ({ js: format === "cjs" ? ".cjs" : ".mjs" }),
   platform: "browser",
   esbuildPlugins: [
+    tablerCjsReplacePlugin,
     removeTestIdsPlugin,
     lodashReplacePlugin,
+    prismReactRendererThemeReplacePlugin,
     markAsExternalPlugin,
   ],
   loader: {
@@ -32,5 +39,5 @@ export default defineConfig({
       js: '"use client"',
     };
   },
-  onSuccess: "tsc --project tsconfig.declarations.json",
+  onSuccess: "npm run types",
 });

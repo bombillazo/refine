@@ -244,9 +244,9 @@ describe("inferencer-mantine", () => {
 
       // assert default theme is working
       if (initialTheme === "dark") {
-        expect(cy.get(".icon-tabler-sun").should("exist"));
+        expect(cy.get(".tabler-icon-sun").should("exist"));
       } else {
-        expect(cy.get(".icon-tabler-moon-stars").should("exist"));
+        expect(cy.get(".tabler-icon-moon-stars").should("exist"));
       }
 
       // click the theme switch
@@ -254,10 +254,10 @@ describe("inferencer-mantine", () => {
       cy.getAllLocalStorage().then((ls) => {
         // assert the theme is changed, it should be reversed from initial theme
         if (initialTheme === "dark") {
-          expect(cy.get(".icon-tabler-moon-stars").should("exist"));
+          expect(cy.get(".tabler-icon-moon-stars").should("exist"));
           expect(ls[BASE_URL]["mantine-color-scheme"]).to.contains("light");
         } else {
-          expect(cy.get(".icon-tabler-sun").should("exist"));
+          expect(cy.get(".tabler-icon-sun").should("exist"));
           expect(ls[BASE_URL]["mantine-color-scheme"]).to.contains("dark");
         }
       });
@@ -269,14 +269,15 @@ describe("inferencer-mantine", () => {
       cy.getMantineLoadingOverlay().should("not.exist");
       // should be reversed from initial theme
       if (initialTheme?.includes("dark") || initialTheme === undefined) {
-        expect(cy.get(".icon-tabler-sun").should("exist"));
+        expect(cy.get(".tabler-icon-sun").should("exist"));
       } else {
-        expect(cy.get(".icon-tabler-moon-stars").should("exist"));
+        expect(cy.get(".tabler-icon-moon-stars").should("exist"));
       }
     });
   });
 
   it("should work with pagination", () => {
+    cy.wait("@getBlogPosts");
     cy.wait("@getBlogPosts");
     cy.wait("@getBlogPosts");
     cy.wait("@getCategories");
@@ -285,8 +286,6 @@ describe("inferencer-mantine", () => {
     cy.get(".mantine-Pagination-item").contains("2").click();
     cy.url().should("include", "current=2");
     cy.getMantineLoadingOverlay().should("not.exist");
-    cy.wait("@getBlogPosts");
-    cy.wait("@getBlogPosts");
     cy.wait("@getBlogPosts").then((interception) => {
       const { request } = interception;
       const { _start, _end } = request.query;

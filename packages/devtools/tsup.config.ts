@@ -1,11 +1,15 @@
 import { defineConfig } from "tsup";
 import { NodeResolvePlugin } from "@esbuild-plugins/node-resolve";
+import { lodashReplacePlugin } from "../shared/lodash-replace-plugin";
 
 export default defineConfig({
   entry: ["src/index.ts"],
   splitting: false,
   sourcemap: true,
   clean: false,
+  minify: true,
+  format: ["cjs", "esm"],
+  outExtension: ({ format }) => ({ js: format === "cjs" ? ".cjs" : ".mjs" }),
   platform: "browser",
   esbuildOptions: (options) => {
     options.define = {
@@ -17,6 +21,7 @@ export default defineConfig({
     };
   },
   esbuildPlugins: [
+    lodashReplacePlugin,
     NodeResolvePlugin({
       extensions: [".js", "ts", "tsx", "jsx"],
       onResolved: (resolved) => {
@@ -29,5 +34,5 @@ export default defineConfig({
       },
     }),
   ],
-  onSuccess: "tsc --project tsconfig.declarations.json",
+  onSuccess: "npm run types",
 });

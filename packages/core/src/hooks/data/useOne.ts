@@ -1,39 +1,41 @@
 import { getXRay } from "@refinedev/devtools-internal";
 import {
   QueryObserverResult,
-  useQuery,
   UseQueryOptions,
+  useQuery,
 } from "@tanstack/react-query";
 
 import {
   pickDataProvider,
   pickNotDeprecated,
+  prepareQueryContext,
   useActiveAuthProvider,
 } from "@definitions";
 import {
   useDataProvider,
   useHandleNotification,
+  useKeys,
   useMeta,
   useOnError,
   useResource,
   useResourceSubscription,
   useTranslate,
 } from "@hooks";
-import { useKeys } from "@hooks/useKeys";
+
 import {
   BaseKey,
   BaseRecord,
   GetOneResponse,
   HttpError,
-  LiveModeProps,
   MetaQuery,
   Prettify,
-  SuccessErrorNotification,
-} from "../../interfaces";
+} from "../../contexts/data/types";
+import { LiveModeProps } from "../../contexts/live/types";
+import { SuccessErrorNotification } from "../../contexts/notification/types";
 import {
-  useLoadingOvertime,
   UseLoadingOvertimeOptionsProps,
   UseLoadingOvertimeReturnType,
+  useLoadingOvertime,
 } from "../useLoadingOvertime";
 
 export type UseOneProps<TQueryFnData, TError, TData> = {
@@ -173,25 +175,17 @@ export const useOne = <
         ...(preferredMeta || {}),
       })
       .get(preferLegacyKeys),
-    queryFn: ({ queryKey, pageParam, signal }) =>
+    queryFn: (context) =>
       getOne<TQueryFnData>({
         resource: resource?.name ?? "",
         id: id!,
         meta: {
           ...combinedMeta,
-          queryContext: {
-            queryKey,
-            pageParam,
-            signal,
-          },
+          queryContext: prepareQueryContext(context),
         },
         metaData: {
           ...combinedMeta,
-          queryContext: {
-            queryKey,
-            pageParam,
-            signal,
-          },
+          queryContext: prepareQueryContext(context),
         },
       }),
     ...queryOptions,
@@ -245,7 +239,7 @@ export const useOne = <
     },
     meta: {
       ...queryOptions?.meta,
-      ...getXRay("useOne", preferLegacyKeys),
+      ...getXRay("useOne", preferLegacyKeys, resource?.name),
     },
   });
 

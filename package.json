@@ -5,6 +5,8 @@
   "license": "MIT",
   "author": "refine",
   "scripts": {
+    "attw": "lerna run publint --scope @refinedev/core",
+    "attw:all": "lerna run attw --scope @refinedev/*",
     "biome": "biome",
     "bootstrap": "lerna bootstrap --hoist --strict --ignore-scripts --include-dependencies",
     "bootstrap:all": "lerna bootstrap --hoist --strict --ignore-scripts --ignore=\"monorepo-*\" --ignore with-nx --scope @refinedev/* --scope create-refine-app",
@@ -27,6 +29,8 @@
     "nuke:lockfiles": "lerna exec --ignore @refinedev/codemod -- rm -rf package-lock.json && lerna exec --ignore @refinedev/codemod -- rm -rf yarn.lock && lerna exec --ignore @refinedev/codemod -- rm -rf pnpm-lock.yaml",
     "nuke:node_modules": "lerna clean --yes",
     "prepare": "husky install",
+    "publint": "lerna run publint --scope @refinedev/core",
+    "publint:all": "lerna run publint --scope @refinedev/*",
     "test": "lerna run test --stream",
     "test:all": "lerna run test --stream --scope @refinedev/* --scope create-refine-app",
     "test:all:coverage": "npm run test:all -- -- --coverage",
@@ -44,6 +48,7 @@
     ]
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.15.3",
     "@biomejs/biome": "^1.5.3",
     "@changesets/changelog-github": "^0.4.6",
     "@changesets/cli": "^2.24.3",
@@ -65,12 +70,13 @@
     "pidtree": "^0.6.0",
     "port-pid": "^0.0.7",
     "prettier": "^2.7.1",
+    "publint": "^0.2.7",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-refresh": "^0.11.0",
     "sort-package-json": "^2.7.0",
-    "ts-jest": "^29.0.3",
-    "typescript": "^4.7.4",
+    "ts-jest": "^29.1.2",
+    "typescript": "^5.4.2",
     "wait-on": "^7.0.1"
   },
   "engines": {

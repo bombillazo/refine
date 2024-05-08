@@ -1,39 +1,41 @@
 import { getXRay } from "@refinedev/devtools-internal";
 import {
   QueryObserverResult,
-  useQuery,
   UseQueryOptions,
+  useQuery,
 } from "@tanstack/react-query";
 
 import {
   handleMultiple,
   pickDataProvider,
   pickNotDeprecated,
+  prepareQueryContext,
   useActiveAuthProvider,
 } from "@definitions/helpers";
 import {
   useDataProvider,
   useHandleNotification,
+  useKeys,
   useMeta,
   useOnError,
   useResource,
   useResourceSubscription,
   useTranslate,
 } from "@hooks";
-import { useKeys } from "@hooks/useKeys";
+
 import {
   BaseKey,
   BaseRecord,
   GetManyResponse,
   HttpError,
-  LiveModeProps,
   MetaQuery,
-  SuccessErrorNotification,
-} from "../../interfaces";
+} from "../../contexts/data/types";
+import { LiveModeProps } from "../../contexts/live/types";
+import { SuccessErrorNotification } from "../../contexts/notification/types";
 import {
-  useLoadingOvertime,
   UseLoadingOvertimeOptionsProps,
   UseLoadingOvertimeReturnType,
+  useLoadingOvertime,
 } from "../useLoadingOvertime";
 
 export type UseManyProps<TQueryFnData, TError, TData> = {
@@ -166,27 +168,18 @@ export const useMany = <
         ...(preferredMeta || {}),
       })
       .get(preferLegacyKeys),
-    queryFn: ({ queryKey, pageParam, signal }) => {
+    queryFn: (context) => {
+      const meta = {
+        ...combinedMeta,
+        queryContext: prepareQueryContext(context),
+      };
+
       if (getMany) {
         return getMany({
           resource: resource?.name,
           ids,
-          meta: {
-            ...combinedMeta,
-            queryContext: {
-              queryKey,
-              pageParam,
-              signal,
-            },
-          },
-          metaData: {
-            ...combinedMeta,
-            queryContext: {
-              queryKey,
-              pageParam,
-              signal,
-            },
-          },
+          meta,
+          metaData: meta,
         });
       }
       return handleMultiple(
@@ -194,22 +187,8 @@ export const useMany = <
           getOne<TQueryFnData>({
             resource: resource?.name,
             id,
-            meta: {
-              ...combinedMeta,
-              queryContext: {
-                queryKey,
-                pageParam,
-                signal,
-              },
-            },
-            metaData: {
-              ...combinedMeta,
-              queryContext: {
-                queryKey,
-                pageParam,
-                signal,
-              },
-            },
+            meta,
+            metaData: meta,
           }),
         ),
       );
@@ -247,7 +226,7 @@ export const useMany = <
     },
     meta: {
       ...queryOptions?.meta,
-      ...getXRay("useMany", preferLegacyKeys),
+      ...getXRay("useMany", preferLegacyKeys, resource?.name),
     },
   });
 

@@ -1,14 +1,15 @@
+import React from "react";
+
 import { renderHook } from "@testing-library/react";
 
+import { legacyResourceTransform } from "@definitions/helpers";
 import {
   TestWrapper,
   mockLegacyRouterProvider,
-  mockRouterBindings,
+  mockRouterProvider,
 } from "@test";
 
 import { useMenu } from ".";
-import { legacyResourceTransform } from "@definitions/helpers";
-import React from "react";
 
 describe("useMenu Hook", () => {
   it("should be empty by default", async () => {
@@ -94,7 +95,7 @@ describe("useMenu Hook", () => {
   it("should have the selectedKey = `posts`", async () => {
     const { result } = renderHook(() => useMenu(), {
       wrapper: TestWrapper({
-        routerProvider: mockRouterBindings({
+        routerProvider: mockRouterProvider({
           resource: {
             name: "posts",
           },
@@ -110,7 +111,7 @@ describe("useMenu Hook", () => {
   it("should have the defaultOpenKeys = [/CMS]", async () => {
     const { result } = renderHook(() => useMenu(), {
       wrapper: TestWrapper({
-        routerProvider: mockRouterBindings({
+        routerProvider: mockRouterProvider({
           pathname: "/CMS/posts",
           resource: {
             name: "posts",
@@ -156,7 +157,7 @@ describe("useMenu Hook", () => {
   it("should have the defaultOpenKeys = [/CMS]", async () => {
     const { result } = renderHook(() => useMenu(), {
       wrapper: TestWrapper({
-        routerProvider: mockRouterBindings({
+        routerProvider: mockRouterProvider({
           pathname: "/CMS/categories/else-new",
           resource: {
             name: "posts",
@@ -364,7 +365,7 @@ describe("useMenu Hook", () => {
         }),
       {
         wrapper: TestWrapper({
-          routerProvider: mockRouterBindings({
+          routerProvider: mockRouterProvider({
             params: {
               orgId: "1",
             },
@@ -389,7 +390,59 @@ describe("useMenu Hook", () => {
     );
   });
 
-  it("should hide item if parameter is missing", async () => {
+  it("should hide item if parameter is missing by default", async () => {
+    const { result } = renderHook(() => useMenu(), {
+      wrapper: TestWrapper({
+        resources: legacyResourceTransform([
+          {
+            name: "visible",
+            list: () => null,
+          },
+          {
+            name: "org-users",
+            list: "orgs/:orgId/users",
+          },
+        ]),
+      }),
+    });
+
+    expect(result.current.menuItems).toEqual(
+      expect.arrayContaining([expect.objectContaining({ name: "visible" })]),
+    );
+    expect(result.current.menuItems).toEqual(
+      expect.not.arrayContaining([
+        expect.objectContaining({ name: "org-users" }),
+      ]),
+    );
+  });
+
+  it("should hide item if parameter is missing by partial props", async () => {
+    const { result } = renderHook(() => useMenu({ meta: {} }), {
+      wrapper: TestWrapper({
+        resources: legacyResourceTransform([
+          {
+            name: "visible",
+            list: () => null,
+          },
+          {
+            name: "org-users",
+            list: "orgs/:orgId/users",
+          },
+        ]),
+      }),
+    });
+
+    expect(result.current.menuItems).toEqual(
+      expect.arrayContaining([expect.objectContaining({ name: "visible" })]),
+    );
+    expect(result.current.menuItems).toEqual(
+      expect.not.arrayContaining([
+        expect.objectContaining({ name: "org-users" }),
+      ]),
+    );
+  });
+
+  it("should hide item if parameter is missing if set explicitly", async () => {
     const { result } = renderHook(
       () => useMenu({ hideOnMissingParameter: true }),
       {
@@ -500,6 +553,7 @@ describe("legacy roter provider", () => {
           ...mockLegacyRouterProvider(),
           useLocation: () => ({
             pathname: "/posts",
+            search: "",
           }),
         },
       }),

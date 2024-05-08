@@ -31,3 +31,6 @@ export { KeyBuilder } from "./keys";
 export { flattenObjectKeys } from "./flatten-object-keys";
 export { propertyPathToArray } from "./property-path-to-array";
 export { downloadInBrowser } from "./downloadInBrowser";
+export { deferExecution } from "./defer-execution";
+export { asyncDebounce } from "./async-debounce";
+export { prepareQueryContext } from "./prepare-query-context";
